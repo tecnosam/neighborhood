@@ -1,0 +1,12 @@
+
+<div class="message" id="{{msg.id}}">
+    <img class="avatar-md" src="{{url_for('render_pp', uid = uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="pic{{uid}}" alt="avatar">
+    <div class="text-main">
+        <div class="text-group">
+            <div class="text">
+                <p>{{msg.msg}}</p>
+            </div>
+        </div>
+        <span>{{msg['date-sent']}}</span>
+    </div>
+</div>

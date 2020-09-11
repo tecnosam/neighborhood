@@ -1,0 +1,10 @@
+
+{%for friend in friends%}
+<a onclick="displayMsg(`{{friend.prober}}`)" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab" href="javascript:void(0)">
+    <img class="avatar-md" src="{{url_for('render_pp', uid = friend.prober)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+
+    <div class="data">
+        <h5>{{friend.name}}</h5>
+    </div>
+</a>
+{%endfor%}

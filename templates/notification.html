@@ -1,0 +1,13 @@
+
+<a onclick="notifSwitch(`{{notification.link}}`)" class="filterNotifications all {%if notification.seen == 1%}seen{%else%}unseen{%endif%} notification" data-toggle="list" href="#">
+    <img class="avatar-md" src="{{url_for('render_pp', uid = notification.link[1:])}}?s={{session['salt']}}"
+        data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+    <!-- <div class="status">
+        <i class="material-icons online">fiber_manual_record</i>
+    </div> -->
+    
+    <div class="data">
+        <p>{{notification.msg}}</p>
+        <span>{{notification.datetime}}</span>
+    </div>
+</a>

@@ -1,0 +1,73 @@
+<hr>
+
+<!-- Start of Babble -->
+<div class="babble tab-pane fade active show" id="list-request" role="tabpanel" aria-labelledby="list-request-list">
+    <!-- Start of Chat -->
+    <div class="chat" id="chat3">
+        <div class="top">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="inside">
+                        <a href="#"><img class="avatar-md" src="{{url_for('render_pp', uid = info.uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="" alt="avatar" data-original-title="Louis"></a>
+                        <div class="status">
+                            <i class="material-icons offline">fiber_manual_record</i>
+                        </div>
+                        <div class="data">
+                            <h5><a href="#">{{info.name}}</a></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content empty">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="no-messages request">
+                        <a href="#"><img class="avatar-xl" src="{{url_for('render_pp', uid = info.uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="" alt="avatar" data-original-title="Louis"></a>
+                        <h5>"{{info.bio}}"</h5>
+                        <!-- <br> -->
+                        <h5>{{info.name}} would like to be your friend.</h5>
+                        <div class="options">
+                            <button class="btn button" onclick="acceptRequest()"><i class="material-icons">check</i></button>
+                            <button class="btn button" onclick="deleteRequest()"><i class="material-icons">delete</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of Chat -->
+</div>
+<!-- End of Babble -->
+<script>
+    tpuid = `{{info.uid}}`;
+    function acceptRequest( ) {
+        new_m = `
+        <a onclick="displayMsg(`+`{{info.uid}}`+`)" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab" href="javascript:void(0)">
+            <img class="avatar-md" src="{{url_for('render_pp', uid = info.uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+            <div class="data">
+                <h5>{{info.name}}</h5>
+            </div>
+        </a>`
+
+        $.ajax({
+            'url': "/friend-request/" + `{{info.uid}}`,
+            method: 'POST',
+            success: function( data ) {
+                $('#nav-tabContent').html( data );
+                //$('#chats').append( new_m );
+                $('#n_friends').html( $('.filterDiscussions').length );
+            }
+        });
+    }
+    function deleteRequest( ) {
+        $.ajax({
+            'url': "/delete-fr/" + `{{info.uid}}`,
+            method: 'POST',
+            success: function( data ) {
+                displayHomie(`{{info.uid}}`);
+                // $('#nav-tabContent').html( data );
+            }
+        });
+    }
+</script>

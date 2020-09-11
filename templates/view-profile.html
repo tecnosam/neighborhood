@@ -1,0 +1,71 @@
+<hr>
+
+<!-- Start of Babble -->
+<div class="babble tab-pane fade active show" id="list-request" role="tabpanel" aria-labelledby="list-request-list">
+    <!-- Start of Chat -->
+    <div class="chat" id="chat3">
+        <div class="top">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="inside">
+                        <a href="#"><img class="avatar-md" src="{{url_for('render_pp', uid = info.uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="" alt="avatar" data-original-title="Louis"></a>
+                        
+                        <div class="data">
+                            <h5><a href="#">{{info.name}}</a></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content empty">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="no-messages request">
+                        <a href="#"><img class="avatar-xl" src="{{url_for('render_pp', uid = info.uid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="" alt="avatar" data-original-title="Louis"></a>
+                        <h5>{{info.bio}}</h5>
+                        <!-- <br> -->
+                        <!-- <h5>{{info.name}} would like to be your friend.</h5> -->
+                        <div class="options">
+                            {%if vsob == -10%}
+                                <!-- If he has sent a friend requests -->
+                                <button class="btn button" onclick="delFriend(`{{info.uid}}`)"><i class="material-icons">delete</i></button>
+                            {%else%}
+                                {%if vsob == -3%}
+                                     <!--if their friends  -->
+                                    <button class="btn button" onclick="displayHomie(`{{info.uid}}`)"><i class="material-icons">chat_bubble</i></button>
+                                    <button class="btn button" onclick="delFriend(`{{info.uid}}`)"><i class="material-icons">delete</i></button>
+                                {%else%}
+                                    <!-- if they are not friends -->
+                                    <button class="btn button" onclick="sendFriendReq(`{{info.uid}}`)"><i class="material-icons">person_add</i></button>
+                                {%endif%}
+                            {%endif%}
+                            <button class="btn button" onclick="unInit();"><i class="material-icons">close</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of Chat -->
+</div>
+<!-- End of Babble -->
+
+<script>
+    tpuid = `{{info.uid}}`;
+    function unInit() {
+        tpuid = 0;
+        rid = 0;
+        $('#list-request').remove();
+    }
+    
+    function deleteRequest( ) {
+        $.ajax({
+            'url': "/delete-fr/" + `{{info.uid}}`,
+            method: 'POST',
+            success: function( data ) {
+                displayHomie(`{{info.uid}}`);
+                // $('#nav-tabContent').html( data );
+            }
+        });
+    }
+</script>

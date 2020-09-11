@@ -1,0 +1,195 @@
+
+<div class="babble tab-pane fade active show" id="list-chat" role="tabpanel" aria-labelledby="list-chat-list">
+    <!-- Start of Chat -->
+    <div class="chat" id="chat1">
+        <hr>
+        <div class="top">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="inside">
+                        {%if is_online%}
+                        <div id="tpuid-status" class="status">
+                            <i class="material-icons online" >fiber_manual_record</i>
+                        </div>
+                        {%else%}
+                            <div id="tpuid-status" class="status" hidden>
+                                <i class="material-icons online">fiber_manual_record</i>
+                            </div>
+                        {%endif%}
+                        <a href="javascript:void(0)" onclick="displayHomie(tpuid, 1)">
+                            <img class="avatar-md" src="{{url_for('render_pp', uid = tpuid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="{{name}}" alt="avatar"></a>
+                        <div class="data">
+                            <h5>
+                                <a href="javascript:void(0)" onclick="displayHomie(tpuid, 1)">{{name}}</a>
+                            </h5>
+                            <span id="online-status">{%if is_online%}Active now{%else%}Inactive{%endif%}</span>
+                        </div>
+                        <a href="javascript:void(0)" 
+                            class="btn d-md-block d-none" 
+                            onclick="unInit();">
+                                <span class="material-icons md-30">clear</span>
+                        </a>
+                        <button class="btn d-md-block d-none" onclick="displayHomie(tpuid, 1)"><i class="material-icons md-30">info</i></button>
+                        <div class="dropdown">
+                            <button class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons md-30">more_vert</i></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="displayHomie(tpuid, 1);">
+                                    <span class="material-icons">info</span>View profile
+                                </a>
+                                <a href="javascript:void(0)" class="dropdown-item" onclick="unInit();">
+                                    <span class="material-icons">clear</span>Minimize Chat
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content" id="content">
+            <div class="container">
+                <div class="col-md-12" id="content">
+                    <!-- <div class="date">
+                        <hr>
+                        <span>Yesterday</span>
+                        <hr>
+                    </div> -->
+                    <div id="msg-box">
+                        {%for msg in thread%}
+                            {%if msg.uid != session.uid%}
+                                <div class="message" id="{{msg.id}}">
+                                    <img class="avatar-md" src="{{url_for('render_pp', uid = tpuid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="{{name}}" alt="avatar">
+                                    <div class="text-main">
+                                        <div class="text-group" ondblclick="$(this).next().children()[0].click()">
+                                            <div class="text">
+                                                {%if session['settings'][0] == 1%}
+                                                    <p>{{msg.filtered}}</p>
+                                                {%else%}
+                                                    <p>{{msg.msg}}</p>
+                                                {%endif%}
+                                            </div>
+                                        </div>
+                                        <span>{{msg['date-sent']}}</span>
+                                    </div>
+                                </div>
+                            {%else%}
+                                <div class="message me" id="{{msg.id}}">
+                                    <div class="text-main">
+                                        <div class="text-group me" ondblclick="$(this).next().children()[0].click()">
+                                            <div class="text me">
+                                                {%if session['settings'][0] == 1%}
+                                                    <p>{{msg.filtered}}</p>
+                                                {%else%}
+                                                    <p>{{msg.msg}}</p>
+                                                {%endif%}
+                                            </div>
+                                        </div>
+                                        <span>{{msg['date-sent']}}</span>
+                                    </div>
+                                </div>
+                            {%endif%}
+                        {%endfor%}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-md-12">
+                <div class="bottom">
+                    <div class="position-relative w-100">
+                        <textarea class="form-control" placeholder="Start typing for reply..." rows="2" id="msg-input" oninput="isSending()"></textarea>
+                        <button class="btn send" id="msg-send"><i class="material-icons">send</i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function scrollToBottom(el) { el.scrollTop = el.scrollHeight; }
+        scrollToBottom(document.getElementById('content'));
+    </script>
+    <script>
+        var rid = `{{r_id}}`;
+        var tpuid = `{{tpuid}}`;
+
+        socket.emit('join', data = rid)
+
+
+        $('#msg-send').click( function(){
+            socket.emit( "msg-send", data = {
+                'msg': $('#msg-input').val(), 
+                'tpuid': tpuid, 
+                'r_id': rid
+            });
+            $('#msg-input').val("");
+            $('#seen').val("")
+            socket.emit( 'stopped-sending', data = {'room': rid} );
+        });
+        function AM( html ){
+            $('#msg-box').append( html );
+            scrollToBottom( document.getElementById('content') );
+        }
+
+        function isSending() { 
+            var t = $('#msg-input').val();
+            if ( t.length > 0 ) {
+                socket.emit( 'sending', data = {'room': rid} )
+            } else {
+                socket.emit( 'stopped-sending', data = {'room': rid} )
+            }
+         }
+    </script>
+    <script>
+        function unInit() {
+            tpuid = 0;
+            rid = 0;
+            $('#list-chat').remove();
+        }
+    </script>
+    <script>
+        var waver = `
+            <div class="message" id = "waverObject">
+            <img class="avatar-md" src="{{url_for('render_pp', uid = tpuid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="Keith" alt="avatar">
+            <div class="text-main">
+                <div class="text-group">
+                    <div class="text typing">
+                        <div class="wave">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        socket.on('sending', function(data) {
+            if ( data !== uid ){
+                if ( data == tpuid ) {
+                    if ( $( '#waverObject' ).length == 0 ){
+                        $('#msg-box').append( waver );
+                        scrollToBottom( document.getElementById('content') );
+                    }
+                }
+            }
+        })
+        socket.on( 'active', function(data) {
+            if ( data.uid == tpuid ) {
+                $(`#online-status`).html( "Active now" );
+                $(`#tpuid-status`).show();
+            }
+        });
+        socket.on( 'inactive', function(data) {
+            if ( data.uid == tpuid ) {
+                $(`#online-status`).html( "Inactive" );
+                $(`#tpuid-status`).hide();
+            }
+        });
+        socket.on( 'stopped-sending', function(data) {
+            if ( data !== uid ){
+                if ( data == tpuid ) {
+                    $('#waverObject').remove(  )
+                }
+            }
+        })
+    </script>
+    <!-- End of Chat -->
+</div>

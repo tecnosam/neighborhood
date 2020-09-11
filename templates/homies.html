@@ -1,0 +1,12 @@
+{%for homie in homies%}
+        <a href="#" class="filterMembers all friend contact" data-toggle="list" onclick="displayHomie(`{{homie.tpuid}}`)">
+            <img class="avatar-md" src="{{url_for('render_pp', uid = homie.tpuid)}}?s={{session['salt']}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+            <div class="data">
+                <h5>{{homie.name}}</h5>
+                <p>{{homie.bio}}</p>
+            </div>
+            <div class="person-add">
+                <i class="material-icons">person</i>
+            </div>
+        </a>
+{%endfor%}
