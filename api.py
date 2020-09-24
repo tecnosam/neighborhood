@@ -169,14 +169,14 @@ class Messenger:
     def __init__(self, uid):
         self.uid = uid
         self.db = Connection()
-    def send_message( self, msg, tpuid, quoted = 0 ):
+    def send_message( self, msg, tpuid, _id, date_sent, quoted = 0 ):
         msg = msg.replace('\\', '\\\\').replace('\"', '\\\"').replace( '\'', "\\\'" )
         # msg = json.dumps( msg )
         sql = """
-                    INSERT INTO msg (`uid`, `tpuid`, `msg`, `quoted`, `date-sent`)
+                    INSERT INTO msg ( `id`,`uid`, `tpuid`, `msg`, `quoted`, `date-sent`)
                     VALUES
-                    (%s, %s, '%s', '%s', '%s')
-              """ % ( self.uid, tpuid, msg, quoted, time.ctime() )
+                    (%s, %s, %s, '%s', '%s', '%s')
+              """ % ( _id, self.uid, tpuid, msg, quoted, date_sent )
         return self.db.set( sql )
     def room_id( self, tpuid ):
         uid = self.uid

@@ -333,20 +333,27 @@ def msg_send(data):
         abort(Response("Permission denied, you have to login first"))
     obj = api.Messenger(session['uid'])
     tpuid = data['tpuid']
+
+    data['id'] = f"{time.time()}".replace(".", "")
+    data['date-sent'] = time.ctime(  )
+
     demo = "%s..." % " ".join(data['msg'].split(" ")[:5]) if len(data['msg']) > 15 else data['msg']
-    res = obj.send_message( data['msg'], tpuid = data['tpuid'] )
+    res = obj.send_message( data['msg'], tpuid = data['tpuid'], _id = data['id'], 
+    date_sent = data['date-sent'] )
+    
     if (res == True):
-        dat = obj.fetch_msg( data['tpuid'] )
 
-        send = render_template( "send.html", msg = dat[-1], uid = data['tpuid'] )
+        send = render_template( "send.html", msg = data, uid = data['tpuid'] )
 
-        recv = render_template( "recv.html", uid = session['uid'], msg = dat[-1])
+        recv = render_template( "recv.html", uid = session['uid'], msg = data)
 
-        send_filtered = render_template( "send_filtered.html", msg = dat[-1], uid = data['tpuid'] )
+        send_filtered = render_template( "send_filtered.html", msg = data, uid = data['tpuid'] )
 
-        recv_filtered = render_template( "recv_filtered.html", uid = session['uid'], msg = dat[-1])
+        recv_filtered = render_template( "recv_filtered.html", uid = session['uid'], msg = data)
 
-        room = str( api.FriendRequest.fetch_id(session['uid'], data['tpuid']) )
+        # room_ = str( api.FriendRequest.fetch_id(session['uid'], data['tpuid']) )
+        room = str( data['r_id'] )
+        # print( room, room_ )
 
         data = {'send': send, 'recv': recv,
             'send_filtered': send_filtered,
@@ -387,7 +394,7 @@ def join_room_( data ):
 @sock.on('leave')
 def leave_room_( data ):
     try:
-        leave_room( room )
+        leave_room( data )
     except:
         pass
 
