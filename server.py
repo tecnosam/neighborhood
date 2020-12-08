@@ -301,7 +301,7 @@ def fr_send(tpuid):
     print( "That was weird @fr_send" )
     return redirect( url_for('display_profile', key = 0, tpuid = tpuid) )
 
-@app.route(".well-known/")
+@app.route("/.well-known/")
 def assetlinks():
     return send_from_directory( "static", "assetlinks.json" )
 
