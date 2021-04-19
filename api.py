@@ -62,7 +62,7 @@ class FriendRequest:
                 'tpuid': i[2],
                 'sender': fetchName( i[1] ),
                 'recv': fetchName( i[2] )
-            } )
+            })
         return ret
     @staticmethod
     def is_accepted(uid, tpuid):
@@ -89,26 +89,28 @@ class FriendRequest:
         sql = f"DELETE FROM `friends` WHERE `id`={self._id} AND (`uid`={self.uid} OR `tpuid`={self.uid})"
         return self.db.set( sql )
 
-def compute_neighbors(data, uid ):
+def compute_neighbors(data, uid, babcock_mode = False ):
     if ( type(data) == dict  ):
         dst = haversine( data, {'x': 0, 'y': 0} )
     else:
         dst = data
-    update = f"UPDATE `users` SET dfe={dst} WHERE `id`={uid}"
-    sql = f"SELECT * FROM `users` WHERE ( dfe>={dst}-2 AND dfe<={dst}+2 ) AND `id`!={uid}"
+
+    if babcock_mode:
+        sql = f"SELECT * FROM `users` WHERE `id`!={uid}"
+    else:
+        update = f"UPDATE `users` SET dfe={dst} WHERE `id`={uid}"
+        sql = f"SELECT * FROM `users` WHERE ( dfe>={dst}-2 AND dfe<={dst}+2 ) AND `id`!={uid}"
     db = Connection()
-    if ( db.set( update ) ):
-        res = db.get( sql )
-        ret = []
-        for i in res:
-            ret.append({
-                'tpuid': i[0],
-                'name': i[1],
-                'bio': i[4]
-            })
+    res = db.get( sql )
+    ret = []
+    for i in res:
+        ret.append({
+            'tpuid': i[0],
+            'name': i[1],
+            'bio': i[4]
+        })
         # print(ret, "nnin")
-        return ret, dst
-    return [], dst
+    return ret, dst
 
 class Friend(FriendRequest):
     @staticmethod
@@ -269,6 +271,22 @@ class Notifications:
 def is_online(uid, db):
     sql = f"SELECT * FROM `users` WHERE `id`={uid} AND active=1"
     return len(db.get( sql )) > 0
+
+def fetch_friend_request(uid):
+    sql = f"SELECT * FROM `friends` WHERE (`tpuid`={uid} OR `uid`={uid}) AND flag=0"
+    db = Connection()
+    res = db.get( sql )
+    ret = []
+    for i in res:
+        ret.append( {
+            'id': i[0],
+            'uid': i[1],
+            'tpuid': i[2],
+            'sender': fetchName( i[1] ),
+            'recv': fetchName( i[2] ),
+            'datetime': i[4]
+        })
+    return ret
 
 def load_settings(uid):
     name = f"{uid}.json"

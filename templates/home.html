@@ -62,7 +62,7 @@
 										<button class="btn filterMembersBtn" data-toggle="list" data-filter="stranger">New guys</button>
 									</div> -->
 									<div class="contacts">
-										<h1>Guys around the Block</h1>
+										<h1>NB users. Eskeetit</h1>
 										<div class="list-group" id="contacts" role="tablist">
 										</div>
 									</div>
@@ -108,26 +108,40 @@
 										</form>
 									</div>
 									<div class="list-group sort">
-										<button class="btn filterNotificationsBtn" data-toggle="list" data-filter="unseen">Unseen</button>
-										<button class="btn filterNotificationsBtn" data-toggle="list" data-filter="seen">Seen</button>
+										<button class="btn filterNotificationsBtn" data-toggle="list" data-filter="sent">Sent</button>
+										<button class="btn filterNotificationsBtn" data-toggle="list" data-filter="recieved">Recieved</button>
 										<button class="btn filterNotificationsBtn active show" data-toggle="list" data-filter="all">All</button>
 									</div>						
 									<div class="notifications">
-										<h1>Notifications</h1>
+										<h1>Homie Requests</h1>
 										<div class="list-group" id="alerts" role="tablist">
-										{%for notification in notifications[::-1]%}
-											<a onclick="notifSwitch(`{{notification.link}}`)" class="filterNotifications all {%if notification.seen == 1%}seen{%else%}unseen{%endif%} notification" data-toggle="list" href="javascript:void(0)">
-												<img class="avatar-md" src="{{url_for('render_pp', uid = notification.link[1:])}}?s={{session['salt']}}"
-												 data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
-												<!-- <div class="status">
-													<i class="material-icons online">fiber_manual_record</i>
-												</div> -->
-												
-												<div class="data">
-													<p>{{notification.msg}}</p>
-													<span>{{notification.datetime}}</span>
-												</div>
-											</a>
+										{%for request in f_requests[::-1]%}
+
+											{%if request.uid == session.uid %}
+												<a onclick="displayHomie(`{{request.tpuid}}`)" class="filterNotifications all sent notification" data-toggle="list" href="javascript:void(0)">
+													<!-- <div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div> -->
+													<img class="avatar-md" src="{{url_for('render_pp', uid = 0)}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+			
+													<div class="data">
+														<p>You sent {{request.receiver}} a homie request</p>
+														<span>{{request.datetime}}</span>
+													</div>
+												</a>
+											{%else%}
+												<a onclick="displayHomie(`{{request.uid}}`)" class="filterNotifications all recieved notification" data-toggle="list" href="javascript:void(0)">
+													<!-- <div class="status">
+														<i class="material-icons online">fiber_manual_record</i>
+													</div> -->
+													<img class="avatar-md" src="{{url_for('render_pp', uid = 0)}}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+			
+													<div class="data">
+														<p>{{request.sender}} sent you a homie request</p>
+														<span>{{request.datetime}}</span>
+													</div>
+												</a>
+											{%endif%}
 										{%endfor%}
 										</div>
 									</div>

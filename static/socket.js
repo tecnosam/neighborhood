@@ -2,6 +2,8 @@
 var socket = io();
 socket.on('connect', function() {
     console.log( "Connected..." );
+    console.log("Sending request for other users")
+    socket.emit( "neighbors", data = {'loadPrev': true} )
 } );
 
 socket.on( 'disconnect', function() {
@@ -9,6 +11,7 @@ socket.on( 'disconnect', function() {
 } );
 
 socket.on( 'neighbors', function(data){
+    console.log(data)
     $('#contacts').html( data );
 } )
 
@@ -75,15 +78,15 @@ socket.on( 'push', function(data) {
         
     }
     
-} )
+})
 
-var loc, options;
-options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-  };
+// var loc, options;
+// options = {
+//     enableHighAccuracy: true,
+//     timeout: 0,
+//     maximumAge: 0
+//   };
 
-console.log("rice");
-loc = navigator.geolocation.watchPosition(recomputeNeighbors, NavigationError, options);
-console.log(loc)
+// console.log("rice");
+// loc = navigator.geolocation.watchPosition(recomputeNeighbors, NavigationError, options);
+// console.log(loc)

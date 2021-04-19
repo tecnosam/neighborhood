@@ -155,8 +155,8 @@ def home():
         return redirect( url_for( 'login' ) )
     session['salt'] = int(time.time())
     friends = api.Friend.fetch_friends( session['uid'] )
-    notifications = api.Notifications( session['uid'] ).fetch()
-    return render_template( "home.html", friends = friends, notifications = notifications, len = len )
+    f_requests = api.fetch_friend_request( session['uid'] )
+    return render_template( "home.html", friends = friends, f_requests = f_requests, len = len )
 
 @app.route("/chat/<tpuid>")
 def chats(tpuid):
@@ -323,13 +323,14 @@ def disconnect():
 @sock.on('neighbors')
 def neighbors(data):
     if ( 'loadPrev' in data ):
-        print("offline computation in progress")
+        # print("offline computation in progress")
         data = session['dfe']
-    n = api.compute_neighbors( data, session['uid'] )
+    n = api.compute_neighbors( data, session['uid'], babcock_mode = True )
+
     session['dfe'] = n[1]
     # print( n )
     # print( n[0] )
-    sock.emit( 'neighbors', data = render_template( "homies.html", homies = n[0] ) )
+    sock.emit( 'neighbors', render_template( "homies.html", homies = n[0] ) )
 
 @sock.on('msg-send')
 def msg_send(data):

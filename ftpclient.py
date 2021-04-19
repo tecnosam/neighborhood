@@ -8,10 +8,10 @@ __PATH__ = os.path.realpath("")
 
 class FileStorage:
     def __init__(self, server = "ftp.drivehq.com", usr = "tecnosam", pwd = "I$AAc1023", persist = False):
-        self.ftp = FTP( server )
-        self.ftp.login( usr, pwd )
-        # self.ftp = FTP( "localhost" )
-        # self.ftp.login( "nb", "isaac1023" )
+        # self.ftp = FTP( server )
+        # self.ftp.login( usr, pwd )
+        self.ftp = FTP( "localhost" )
+        self.ftp.login( "nb", "isaac1023" )
         self.persist = persist
     def backup( self, d = "/pp" ):
         for i in os.listdir( "pp" ):

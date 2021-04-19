@@ -5,8 +5,8 @@ class Connection:
     def __init__(self, 
         host = 'lt80glfe2gj8p5n2.chr7pe7iynqr.eu-west-1.rds.amazonaws.com', 
         usr = 'mdocmw8yz1yg06vs', pwd = 'vmlhzeoornb5d395', db = "mlyuihxw4babtbdf"):
-        self.db = DBAdapter.connect( host, usr, pwd, db )
-        # self.db = DBAdapter.connect( "localhost", "root", "", "nb-pro" )
+        # self.db = DBAdapter.connect( host, usr, pwd, db )
+        self.db = DBAdapter.connect( "localhost", "root", "", "nb-pro" )
     
     def set( self, sql ):
         with self.db.cursor() as c:
